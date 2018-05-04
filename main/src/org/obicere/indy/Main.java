@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Main {
 
-    private static final String VERSION = "v0.003b";
+    private static final String VERSION = "v0.004b";
 
     public static void main(final String[] args) {
         boolean debug = false;
@@ -32,7 +32,7 @@ public class Main {
                 case "-d":
                     debug = true;
                     break;
-                case "-ds":
+                case "-s":
                     stack = true;
                     break;
                 case "-h":
@@ -96,6 +96,7 @@ public class Main {
         Log.info("Usage: indy <options> <files>");
         Log.info("Where options include:");
         Log.info("    -d: enables debug printing");
+        Log.info("    -s: enables stack printing when an error occurs");
         Log.info("    -h: prints help");
         Log.info("    -v: prints version information");
     }
