@@ -25,7 +25,7 @@ public class Log {
     }
 
     public static void info(final Object message) {
-        info(String.valueOf(message));
+        printTo(System.out, String.valueOf(message));
     }
 
     public static void info(final boolean message) {
