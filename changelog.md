@@ -1,6 +1,6 @@
-#indy change log v0.003b
+# indy change log v0.003b
 
-## v0.003b - 2018-05-03
+## [v0.003b] - 2018-05-03
 ### Added 
 - Logging support
 
@@ -15,3 +15,5 @@
 - First version release.
 
 - If emojis aren't supported on your `.md` viewer, sorry in advance. :tada: :fireworks:
+
+[v0.003b]: https://github.com/Obicere/indy/releases/tag/v0.003b
