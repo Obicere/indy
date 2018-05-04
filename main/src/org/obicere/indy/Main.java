@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Main {
 
-    private static final String VERSION = "0.003b";
+    private static final String VERSION = "v0.003b";
 
     public static void main(final String[] args) {
         boolean debug = false;
