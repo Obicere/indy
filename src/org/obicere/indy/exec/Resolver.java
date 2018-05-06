@@ -3,17 +3,13 @@ package org.obicere.indy.exec;
 import jdk.internal.org.objectweb.asm.Opcodes;
 import org.obicere.indy.logging.Log;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.PrintStream;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.invoke.CallSite;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.invoke.VolatileCallSite;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,22 +26,23 @@ public class Resolver {
 
     private static final Map<String, String> INFO = new HashMap<>();
 
+    private static boolean doubleDip = false;
+
     static {
         try {
-            final File input = new File("db.info");
-            if (input.exists()) {
-                final BufferedReader scanner = new BufferedReader(new FileReader(input));
+            final InputStream input = Resolver.class.getClassLoader().getResourceAsStream("db.info");
+            final BufferedReader scanner = new BufferedReader(new InputStreamReader(input));
 
-                String line;
-                while ((line = scanner.readLine()) != null) {
-                    String[] parts = line.split("=");
-                    String res = parts[0];
-                    String call = parts[1];
+            String line;
+            while ((line = scanner.readLine()) != null) {
+                String[] parts = line.split("=");
+                String res = parts[0];
+                String call = parts[1];
 
-                    INFO.put(res, call);
-                }
-                scanner.close();
+                INFO.put(res, call);
             }
+            scanner.close();
+            doubleDip = true;
         } catch (final Throwable e) {
             e.printStackTrace();
             System.exit(-1);
@@ -107,9 +104,6 @@ public class Resolver {
         }
 
         try {
-            Log.info(dynMethodType);
-            Log.info(methodType);
-            Log.info(mh.type());
             if (!dynMethodType.equals(mh.type())) {
                 mh = mh.asType(dynMethodType);
             }
@@ -124,6 +118,11 @@ public class Resolver {
     }
 
     public static Resolution obscure(final String caller, final int opcode, final String owner, final String name, final String desc, final boolean itf) {
+        if (doubleDip) {
+            INFO.clear();
+            doubleDip = false;
+        }
+
         String methodName = generateName();
         MethodType methodType = MethodType.fromMethodDescriptorString(desc, Resolver.class.getClassLoader());
         Object[] args = generateArguments();
@@ -268,7 +267,7 @@ public class Resolver {
         }
 
         public Resolution(MethodHandles.Lookup caller, String methodName, MethodType methodType, Object[] args) {
-            this.caller = caller.lookupClass().getName();
+            this.caller = caller.lookupClass().getName().replace('.', '/');
             this.methodName = methodName;
             this.methodType = methodType;
             this.args = args;

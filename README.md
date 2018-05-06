@@ -73,6 +73,8 @@ The following external libraries are required for this application to run:
 
  - [asm-6.0.jar]
 
+Any necessary dependencies will be included in the [builds] folder. 
+
 ## More Information
 
  - [Java Virtual Machine Support for Non-Java Languages]
@@ -83,9 +85,12 @@ The following external libraries are required for this application to run:
  
  - [Java invoke application programming interface]
 
+##
+
 [releases]: https://github.com/Obicere/indy/releases 
 [changelog]: https://github.com/Obicere/indy/blob/master/changelog.md
 [asm-6.0.jar]: http://asm.ow2.io/
+[builds]: https://github.com/Obicere/indy/tree/master/build
 [Java Virtual Machine Support for Non-Java Languages]: https://docs.oracle.com/javase/8/docs/technotes/guides/vm/multiple-language-support.html
 [invoke dynamic verification by type checking §4.10.1.9]: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.10.1.9.invokedynamic
 [invoke dynamic instruction specification §6.5]: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.invokedynamic
