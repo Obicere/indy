@@ -1,4 +1,4 @@
-# indy change log v0.003b
+# indy change log v0.004b
 
 ## [v0.004b] - 2018-05-04
 ### Added
