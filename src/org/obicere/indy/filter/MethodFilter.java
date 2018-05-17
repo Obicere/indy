@@ -1,9 +1,8 @@
 package org.obicere.indy.filter;
 
-/**
- */
+@Deprecated
 public interface MethodFilter {
 
-    public boolean accept(final int opcode, final String owner, final String name, final String desc, final boolean itf);
+    public boolean accept(final int access, final String name, final String desc, final String signature, final String[] exceptions);
 
 }

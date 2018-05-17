@@ -1,10 +1,8 @@
 package org.obicere.indy.filter;
 
-/**
- */
 public class ConstructorMethodFilter implements MethodFilter {
     @Override
-    public boolean accept(final int opcode, final String owner, final String name, final String desc, final boolean itf) {
+    public boolean accept(int access, String name, String desc, String signature, String[] exceptions) {
         return !name.equals("<init>");
     }
 }

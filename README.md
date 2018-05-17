@@ -45,8 +45,7 @@ The entire changelog can be viewed here: [changelog]
 
 The currently supported and tested Java versions:
 
-- Java SE 7
-- Java SE 8
+- Java SE 1.8.0_112 (and above)
 
 Only standard Java libraries should be used. 
 Certain libraries that rely on dynamic or runtime name resolution may be affected by this program. 

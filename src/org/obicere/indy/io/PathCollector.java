@@ -24,6 +24,8 @@ public class PathCollector {
 
     private final boolean acceptJars;
 
+    private boolean inJar = false;
+
     public PathCollector(final Path input, final Path output, final String pattern, final int maxDepth, final boolean acceptJars) {
         if (maxDepth == 0 || maxDepth < -1) {
             throw new IllegalArgumentException("maxDepth must be -1 or positive: " + maxDepth);
@@ -49,7 +51,7 @@ public class PathCollector {
 
     private String getExtension(final Path name) {
         final String text = name.toString();
-        final int index = text.indexOf('.');
+        final int index = text.lastIndexOf('.');
         if (index <= 0) {
             return null;
         } else {
@@ -76,11 +78,13 @@ public class PathCollector {
 
     private void processJar(final Path output, final Path input, final Path path, final Path relp) throws IOException {
         Path outputJar = output.resolve(relp);
+        Files.createDirectories(outputJar.getParent());
         final URI newJarURI = URI.create("jar:" + outputJar.toUri());
         Log.debug("%s, %s, %s, %s", PathUtils.print(output), PathUtils.print(path), PathUtils.print(outputJar), newJarURI);
 
         final Map<String, String> environment = new HashMap<>();
         environment.put("create", "true");
+        environment.put("useTempFile", "true");
 
         final FileSystem newJar = FileSystems.newFileSystem(newJarURI, environment);
         final Path newJarPath = newJar.getPath("/");
@@ -88,6 +92,7 @@ public class PathCollector {
 
         if (acceptJars) {
 
+            inJar = true;
             //Log.debug("Accessing jar: %s", path.toAbsolutePath());
 
             final FileSystem jar = FileSystems.newFileSystem(path, getClass().getClassLoader());
@@ -101,7 +106,7 @@ public class PathCollector {
 
             //jar.close();
 
-            //paths.add(new PathJob(PathOperation.PROCESS, path, newPath));
+            inJar = false;
         } else {
             paths.add(new PathJob(PathOperation.COPY, path, newPath));
         }
@@ -126,7 +131,7 @@ public class PathCollector {
         }
 
         @Override
-        public FileVisitResult visitFile(final Path path, final BasicFileAttributes attributes) throws IOException {
+        public FileVisitResult visitFile(final Path path, final BasicFileAttributes attributes) {
             final Path relp = input.relativize(path);
             final Path name = path.getFileName();
             if (name == null) {
@@ -138,18 +143,25 @@ public class PathCollector {
                 processOther(output, input, path, relp);
                 return FileVisitResult.CONTINUE;
             }
+            try {
+                switch (ext) {
+                    case JAR_EXT:
+                        if(inJar) {
+                            processOther(output, input, path, relp);
+                        } else {
+                            processJar(output, input, path, relp);
+                        }
+                        break;
+                    case CLASS_EXT:
+                        processClass(output, input, path, relp);
+                        break;
+                    default:
+                        processOther(output, input, path, relp);
+                        break;
 
-            switch (ext) {
-                case JAR_EXT:
-                    processJar(output, input, path, relp);
-                    break;
-                case CLASS_EXT:
-                    processClass(output, input, path, relp);
-                    break;
-                default:
-                    processOther(output, input, path, relp);
-                    break;
-
+                }
+            } catch (final Throwable e) {
+                Log.error("Error processing file: %s, %s", e, path, e.getMessage());
             }
             return FileVisitResult.CONTINUE;
         }
