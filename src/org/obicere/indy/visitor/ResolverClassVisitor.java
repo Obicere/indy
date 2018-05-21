@@ -1,10 +1,14 @@
 package org.obicere.indy.visitor;
 
 import org.obicere.indy.exec.NameInfo;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.TypePath;
 
 public class ResolverClassVisitor extends ClassVisitor {
 
@@ -22,18 +26,72 @@ public class ResolverClassVisitor extends ClassVisitor {
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
-        return super.visitField(access, name, desc, signature, name.equals("FILE_NAME") ? info.getFileName() : value);
+        final Object constant = name.equals("FILE_NAME") ? info.getFileName() : value;
+        final FieldVisitor fv = super.visitField(access, name, desc, signature, constant);
+        return new ResolverFieldVisitor(api, fv);
     }
 
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
-        final MethodVisitor mv;
-        if(name.equals("resolve")) {
-            mv = super.visitMethod(access, info.getMethodName(), desc, signature, exceptions);
-        } else {
-            mv = super.visitMethod(access, name, desc, signature, exceptions);
-        }
+        final String newName = name.equals("resolve") ? info.getMethodName() : name;
+        final MethodVisitor mv = super.visitMethod(access, newName, desc, signature, exceptions);
         return new ResolverMethodVisitor(api, mv);
+    }
+
+    @Override
+    public void visitOuterClass(final String owner, final String name, final String desc) {
+        // super.visitOuterClass(owner, name, desc);
+    }
+
+    @Override
+    public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+        return null;
+        // return super.visitAnnotation(desc, visible);
+    }
+
+    @Override
+    public AnnotationVisitor visitTypeAnnotation(final int typeRef, final TypePath typePath, final String desc, final boolean visible) {
+        return null;
+        //return super.visitTypeAnnotation(typeRef, typePath, desc, visible);
+    }
+
+    @Override
+    public void visitInnerClass(final String name, final String outerName, final String innerName, final int access) {
+        //super.visitInnerClass(name, outerName, innerName, access);
+    }
+
+    @Override
+    public void visitSource(final String source, final String debug) {
+        //super.visitSource(source, debug);
+    }
+
+    @Override
+    public void visitAttribute(final Attribute attr) {
+        //super.visitAttribute(attr);
+    }
+
+    private class ResolverFieldVisitor extends FieldVisitor {
+
+        public ResolverFieldVisitor(final int api, final FieldVisitor fv) {
+            super(api, fv);
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+            return null;
+            //return super.visitAnnotation(desc, visible);
+        }
+
+        @Override
+        public AnnotationVisitor visitTypeAnnotation(final int typeRef, final TypePath typePath, final String desc, final boolean visible) {
+            return null;
+            //return super.visitTypeAnnotation(typeRef, typePath, desc, visible);
+        }
+
+        @Override
+        public void visitAttribute(final Attribute attr) {
+            //super.visitAttribute(attr);
+        }
     }
 
     private class ResolverMethodVisitor extends MethodVisitor {
@@ -78,6 +136,71 @@ public class ResolverClassVisitor extends ClassVisitor {
             super.visitMethodInsn(opcode, owner.replace(swap, with), name, desc, itf);
         }
 
+        @Override
+        public void visitParameter(final String name, final int access) {
+            // super.visitParameter(name, access);
+        }
 
+        @Override
+        public AnnotationVisitor visitAnnotationDefault() {
+            return null;
+            // return super.visitAnnotationDefault();
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+            return null;
+            // return super.visitAnnotation(desc, visible);
+        }
+
+        @Override
+        public AnnotationVisitor visitTypeAnnotation(final int typeRef, final TypePath typePath, final String desc, final boolean visible) {
+            return null;
+            // return super.visitTypeAnnotation(typeRef, typePath, desc, visible);
+        }
+
+        @Override
+        public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
+            return null;
+            // return super.visitParameterAnnotation(parameter, desc, visible);
+        }
+
+        @Override
+        public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
+            super.visitFrame(type, nLocal, local, nStack, stack);
+        }
+
+        @Override
+        public AnnotationVisitor visitInsnAnnotation(final int typeRef, final TypePath typePath, final String desc, final boolean visible) {
+            return null;
+            // return super.visitInsnAnnotation(typeRef, typePath, desc, visible);
+        }
+
+        @Override
+        public AnnotationVisitor visitTryCatchAnnotation(final int typeRef, final TypePath typePath, final String desc, final boolean visible) {
+            return null;
+            // return super.visitTryCatchAnnotation(typeRef, typePath, desc, visible);
+        }
+
+        @Override
+        public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
+            // super.visitLocalVariable(name, desc, signature, start, end, index);
+        }
+
+        @Override
+        public AnnotationVisitor visitLocalVariableAnnotation(final int typeRef, final TypePath typePath, final Label[] start, final Label[] end, final int[] index, final String desc, final boolean visible) {
+            return null;
+            // return super.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, desc, visible);
+        }
+
+        @Override
+        public void visitLineNumber(final int line, final Label start) {
+            // super.visitLineNumber(line, start);
+        }
+
+        @Override
+        public void visitAttribute(final Attribute attr) {
+            // super.visitAttribute(attr);
+        }
     }
 }

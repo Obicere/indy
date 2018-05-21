@@ -139,7 +139,6 @@ public class Main {
 
         final Statistics statistics = new Statistics();
 
-
         for (final String path : paths) {
             System.out.println(path);
             final Path inputPath = Paths.get(input);
@@ -160,16 +159,13 @@ public class Main {
                 systems.add(job.getTo().getFileSystem());
 
                 final FileSystem to = job.getTo().getFileSystem();
-                List<PathJob> jobs = buckets.get(to);
-                if (jobs == null) {
-                    jobs = new ArrayList<>();
-                    buckets.put(to, jobs);
-                }
+                final List<PathJob> jobs = buckets.computeIfAbsent(to, k -> new ArrayList<>());
+
                 jobs.add(job);
                 names.add(job.getTo().getFileName().toString());
             }
 
-            int batchCount  = 0;
+            int batchCount = 0;
             try {
                 final int min = 5;
                 final int max = 20;
@@ -204,13 +200,15 @@ public class Main {
                         start += limit;
                     }
                 }
-            } catch(final Throwable e) {
+            } catch (final Throwable e) {
                 Log.error("Error running batch: %s", e, e.getMessage());
             }
 
             for (final FileSystem system : systems) {
                 try {
                     system.close();
+                } catch (final UnsupportedOperationException e) {
+                    // we ignore this since the default file system is non-closeable
                 } catch (final Throwable t) {
                     t.printStackTrace();
                 }

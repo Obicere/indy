@@ -16,14 +16,19 @@ They will print out at the end.
 The code causes verification errors when ran, so it is currently disabled. 
 Future Java versions may have patched the issue.
 
-- The `db.info` files are now exported into the output directory of the output. 
-In the case of `.jar` files, the info files are exported into the top level directory of the jar. 
-
 - Batches have been added. 
 A variable number of files are processed per batch.
 If the batch does not do any processing, a `db.info` file is not generated. 
 
 - Specific error codes are going to be produced. 
+
+- The fundamentals for localization. 
+Existing messages will soon be replaced through the resource bundles. 
+
+- Required files for the class files to execute are now exported into the output.
+
+- Some new system arguments. Many (most) are non-functional and reserved. 
+These will almost certainly change.
 
 ### Changed
 
@@ -36,6 +41,11 @@ The original concept was to filter based on the invoked method.
 - In the credential class `Credential`, the interface flag was deemed worthless.
 It has been repurposed as the array method flag. 
 This is used to enforce resolution of methods called on arrays to the `Object` class.
+
+- Attributes not required for the `Resolver` classes to be ran are stripped from the class files. 
+
+- The name `info.db` is no longer used. 
+Randomly generated file names with no extensions are used now. 
 
 ### Fixed
 
@@ -56,6 +66,9 @@ Note: this is the newly created method filter and not the renamed instruction fi
 
 - The existing `Log#error` methods have been deprecated. 
 A new error system with specific codes is being rolled out. 
+
+- The globbing for paths should no longer be used. 
+This was due to an issue with how some command lines were treating the globbing. 
 
 ## [v0.004b] - 2018-05-04
 ### Added
