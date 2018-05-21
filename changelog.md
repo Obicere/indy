@@ -1,6 +1,9 @@
 # indy change log v0.004b
 
-## [v0.005b] - Unreleased
+## [v0.006b] - Unreleased
+###
+
+## [v0.005b] - 2018-05-21
 ### Added
 
 - Statistics are now supported. 
@@ -112,6 +115,7 @@ Therefore, the lifeline of these classes will be deprecated and replaced.
 ## 
 ### 
 
+[v0.006b]: https://github.com/Obicere/indy/releases/tag/v0.006b
 [v0.005b]: https://github.com/Obicere/indy/releases/tag/v0.005b
 [v0.004b]: https://github.com/Obicere/indy/releases/tag/v0.004b
 [v0.003b]: https://github.com/Obicere/indy/releases/tag/v0.003b
